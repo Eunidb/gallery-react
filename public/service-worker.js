@@ -7,12 +7,10 @@ self.addEventListener('install', event => {
           '/index.css',
           '/manifest.json',
           '/service-worker.js', // Cachear también el service worker
-          '/assets/maap.jpg',
-          '/assets/maap1.jpg',
-          '/assets/maapM.jpg',
-          '/assets/maap1M.jpg',
-          '/assets/spc.png',
-          '/assets/scl.png'
+          '/assets/img.jpeg',
+          '/assets/img2.jpeg',
+          '/assets/img3.jpeg',
+          '/assets/img4.jpeg'
         ]).catch(error => {
           console.error('Failed to cache:', error);
           throw error;

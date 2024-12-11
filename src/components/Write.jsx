@@ -47,7 +47,7 @@ const Write = () => {
       await guardarDatos(newData);
 
       // Actualiza el estado local
-      setImagenes(prevImagenes => [...prevImagenes, newData]);
+      setImagenes((prevImagenes) => [...prevImagenes, newData]);
       setInputValue1("");
       setInputValue2("");
       setInputValue3("");
@@ -79,7 +79,7 @@ const Write = () => {
 
       // Recupera los datos de IndexedDB para offline
       const offlineData = await obtenerDatos();
-      setImagenes(prevImagenes => {
+      setImagenes((prevImagenes) => {
         // Merge and deduplicate data
         const mergedData = [...prevImagenes, ...offlineData];
         return mergedData.filter((item, index, self) => 
@@ -101,7 +101,7 @@ const Write = () => {
       alert("Imagen eliminada correctamente");
 
       // Actualiza el estado local
-      setImagenes(imagenes.filter(imagen => imagen.id !== id));
+      setImagenes(imagenes.filter((imagen) => imagen.id !== id));
     } catch (error) {
       console.error("Error al eliminar la imagen:", error);
     }
@@ -123,7 +123,7 @@ const Write = () => {
       alert("Imagen actualizada correctamente");
 
       // Actualiza el estado local
-      setImagenes(imagenes.map(imagen => 
+      setImagenes(imagenes.map((imagen) => 
         imagen.id === id 
           ? { ...imagen, ...updatedData } 
           : imagen
@@ -170,7 +170,7 @@ const Write = () => {
       <h3>Imágenes Guardadas:</h3>
       <ul>
         {imagenes.map((imagen) => (
-          <li key={imagen.id || imagen.timestamp}>
+          <li key={imagen.id}>
             <h4>{imagen.titulo}</h4>
             <p>{imagen.descripcion}</p>
             <p>Categoría: {imagen.categoria}</p>
