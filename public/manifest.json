@@ -1,0 +1,47 @@
+{
+    "short_name": "PWA",
+    "name": "pwwaaaa3",
+    "description": "Blog de arte",
+    "icons": [
+      {
+        "src": "/assets/maap.jpg",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "/assets/maap1.jpg",
+        "type": "image/png",
+        "sizes": "512x512"
+      },
+      {
+        "src": "/assets/maapM.jpg",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "maskable"
+      },
+      {
+        "src": "/assets/maap1M.jpg",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable"
+      }
+    ],
+    "screenshots": [
+      {
+        "src": "/assets/spc.png",
+        "sizes": "1280x720",
+        "type": "image/png",
+        "form_factor": "wide"
+      },
+      {
+        "src": "/assets/scl.png",
+        "sizes": "720x1280",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff"
+  }
+  
