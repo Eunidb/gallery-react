@@ -25,6 +25,7 @@ self.addEventListener('install', event => {
         if (response) {
           return response;
         }
+        
         return fetch(event.request).then(fetchResponse => {
           return caches.open('my-app-cache').then(cache => {
             cache.put(event.request, fetchResponse.clone());

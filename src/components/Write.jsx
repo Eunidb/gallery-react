@@ -18,7 +18,7 @@ const Write = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImageBase64(reader.result); // Incluye automáticamente el prefijo MIME
+        setImageBase64(reader.result);
         setImageUrl(reader.result);
       };
       reader.readAsDataURL(file);
@@ -26,11 +26,8 @@ const Write = () => {
   };
 
   const saveData = async () => {
-    const db = getDatabase(appFirebase);
-    const newDocRef = push(ref(db, "Pinterest/galeria"));
-
     const newData = {
-      id: newDocRef.key, // Ensure a unique ID
+      id: crypto.randomUUID(), // Genera un ID único para offline
       titulo: inputValue1,
       descripcion: inputValue2,
       categoria: inputValue3,
@@ -39,28 +36,32 @@ const Write = () => {
     };
 
     try {
-      // Guarda los datos en Firebase
+      // Intentar guardar en Firebase
+      const db = getDatabase(appFirebase);
+      const newDocRef = push(ref(db, "Pinterest/galeria"));
       await set(newDocRef, newData);
-      alert("Guardado exitoso");
+      newData.id = newDocRef.key; // Actualizar ID con el de Firebase
 
-      // Guarda los datos en IndexedDB
+      alert("Guardado exitoso en Firebase");
+    } catch (error) {
+      console.warn("Guardando en IndexedDB debido a la falta de conexión:", error);
+    } finally {
+      // Guardar siempre en IndexedDB
       await guardarDatos(newData);
 
-      // Actualiza el estado local
+      // Actualizar estado local
       setImagenes((prevImagenes) => [...prevImagenes, newData]);
       setInputValue1("");
       setInputValue2("");
       setInputValue3("");
       setImageBase64("");
       setImageUrl("");
-    } catch (error) {
-      alert("Error al guardar: " + error.message);
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      // Recupera los datos de Firebase
+      // Recuperar datos de Firebase
       const db = getDatabase(appFirebase);
       const imagenesRef = ref(db, "Pinterest/galeria");
 
@@ -71,16 +72,18 @@ const Write = () => {
             id: key,
             ...data[key],
           }));
-          setImagenes(imagenesArray);
-        } else {
-          setImagenes([]);
+          setImagenes((prevImagenes) => {
+            const mergedData = [...imagenesArray, ...prevImagenes];
+            return mergedData.filter((item, index, self) => 
+              index === self.findIndex((t) => t.id === item.id)
+            );
+          });
         }
       });
 
-      // Recupera los datos de IndexedDB para offline
+      // Recuperar datos de IndexedDB
       const offlineData = await obtenerDatos();
       setImagenes((prevImagenes) => {
-        // Merge and deduplicate data
         const mergedData = [...prevImagenes, ...offlineData];
         return mergedData.filter((item, index, self) => 
           index === self.findIndex((t) => t.id === item.id)
@@ -96,21 +99,18 @@ const Write = () => {
     const imagenRef = ref(db, `Pinterest/galeria/${id}`);
 
     try {
-      // Elimina el nodo seleccionado de Firebase
+      // Eliminar de Firebase
       await remove(imagenRef);
       alert("Imagen eliminada correctamente");
-
-      // Actualiza el estado local
-      setImagenes(imagenes.filter((imagen) => imagen.id !== id));
     } catch (error) {
-      console.error("Error al eliminar la imagen:", error);
+      console.warn("No se pudo eliminar en Firebase, actualizando local:", error);
+    } finally {
+      // Actualizar estado local
+      setImagenes(imagenes.filter((imagen) => imagen.id !== id));
     }
   };
 
   const handleUpdate = async (id, newTitulo, newDescripcion, newCategoria) => {
-    const db = getDatabase(appFirebase);
-    const imagenRef = ref(db, `Pinterest/galeria/${id}`);
-
     const updatedData = {
       titulo: newTitulo,
       descripcion: newDescripcion,
@@ -118,18 +118,19 @@ const Write = () => {
     };
 
     try {
-      // Actualiza los datos en Firebase
+      // Actualizar en Firebase
+      const db = getDatabase(appFirebase);
+      const imagenRef = ref(db, `Pinterest/galeria/${id}`);
       await update(imagenRef, updatedData);
-      alert("Imagen actualizada correctamente");
 
-      // Actualiza el estado local
-      setImagenes(imagenes.map((imagen) => 
-        imagen.id === id 
-          ? { ...imagen, ...updatedData } 
-          : imagen
-      ));
+      alert("Imagen actualizada correctamente");
     } catch (error) {
-      console.error("Error al actualizar la imagen:", error);
+      console.warn("No se pudo actualizar en Firebase:", error);
+    } finally {
+      // Actualizar estado local
+      setImagenes(imagenes.map((imagen) => 
+        imagen.id === id ? { ...imagen, ...updatedData } : imagen
+      ));
     }
   };
 
