@@ -6,20 +6,6 @@ import Login from './components/Login';
 import { guardarDatos, obtenerDatos } from './storage';
 import './App.css'; // Importar estilos
 
-
-// index.js o App.js
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(registration => {
-        console.log('Service Worker registrado exitosamente:', registration.scope);
-      })
-      .catch(error => {
-        console.log('Registro de Service Worker fallido:', error);
-      });
-  });
-}
-
 const auth = getAuth(appFirebase);
 
 function App() {
